@@ -6,5 +6,14 @@
 	public string Name { get; set; }
     public decimal CurrentUnitPrice { get; set; }
     public bool IsActive { get; set; }
+
     }
+
+
+        public interface IPersistencia
+        {
+            List<Product> ObtenerProductos();
+        }
+   
+
 }

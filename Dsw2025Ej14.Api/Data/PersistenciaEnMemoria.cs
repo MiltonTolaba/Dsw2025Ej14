@@ -1,26 +1,28 @@
 ﻿using Dsw2025Ej14.Api.Domain;
 using System.Text.Json;
+using System.IO;
+using System.Threading.Tasks;
+
 
 namespace Dsw2025Ej14.Api.Data
 {
-    public class PersistenciaEnMemoria
+
+
+    public class PersistenciaEnMemoria : IPersistencia
     {
         private List<Product> _productos;
 
         public PersistenciaEnMemoria()
         {
-            _productos = new List<Product>();
-            LoadProducts();
+            _productos = LoadProducts().Result;
         }
-        public List<Product> ObtenerTodos() => _productos;
+        public List<Product> ObtenerProductos() => _productos;
 
-        public void LoadProducts()
+        private async Task<List<Product>> LoadProducts()
         {
-            string json = File.ReadAllText("products.json");
-            _productos = JsonSerializer.Deserialize<List<Product>>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            }) ?? [];
-            }
+            var json = await File.ReadAllTextAsync("products.json");
+            return _productos = JsonSerializer.Deserialize<List<Product>>(json, new JsonSerializerOptions()) ?? new List<Product>();
+            
         }
     }
+}

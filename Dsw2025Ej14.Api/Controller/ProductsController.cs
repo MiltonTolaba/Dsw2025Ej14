@@ -1,13 +1,15 @@
 ﻿using Dsw2025Ej14.Api.Data;
 using Microsoft.AspNetCore.Mvc;
+using Dsw2025Ej14.Api.Domain;
 namespace Dsw2025Ej14.Api.Controller
 {
     [ApiController]
     [Route("api")]
     public class ProductsController : ControllerBase
     {
-        private readonly PersistenciaEnMemoria _persistencia;
-        public ProductsController(PersistenciaEnMemoria persistencia)
+        private readonly IPersistencia _persistencia;
+
+        public ProductsController(IPersistencia persistencia)
         {
             _persistencia = persistencia;
         }
@@ -15,17 +17,16 @@ namespace Dsw2025Ej14.Api.Controller
         [HttpGet("products")]
         public IActionResult GetAllActive()
         {
-            var productosActivos = _persistencia
-                .ObtenerTodos()
-                .Where(p => p.IsActive)
-                .ToList();
+            var productosActivos = _persistencia.ObtenerProductos()
+                                                 .Where(p => p.IsActive)
+                                                 .ToList();
 
-            if (productosActivos.Count == 0)
-                return NoContent();
+            if (productosActivos.Any())
+                return Ok(productosActivos);
 
-            return Ok(productosActivos);
+            return NoContent();
         }
 
-        [HttpGet("products/{sku}")]
+        
     }
 }
